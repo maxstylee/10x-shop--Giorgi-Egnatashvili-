@@ -1,6 +1,6 @@
 # 🛍️ 10x-Shop — Project Implementation Plan
 
-> **სტატუსი:** 🚀 აქტიური განვითარება  
+> **სტატუსი:** 🚀 CORE დასრულებულია  
 > **სტეკი:** React 19 • TypeScript • Vite • Tailwind CSS • DummyJSON API  
 > **ავტორი:** Giorgi Egnatashvili  
 
@@ -10,7 +10,7 @@
 1. [ფაზა 1: პროექტის კონფიგურაცია და ჩონჩხი](#-ფაზა-1-პროექტის-კონფიგურაცია-და-ჩონჩხი)
 2. [ფაზა 2: მონაცემების მიღება და ინტეგრაცია (DummyJSON API)](#-ფაზა-2-მონაცემების-მიღება-და-ინტეგრაცია-dummyjson-api)
 3. [ფაზა 3: UI კომპონენტები და სემანტიკა](#-ფაზა-3-ui-კომპონენტები-და-სემანტიკა)
-4. [ფაზა 4: ტესტირება და ხარისხის კონტროლი](#-ფაზა-4-ტესტირება-და-ხარისხის-კონტროლი)
+4. [ფაზა 4: React CORE მოთხოვნები (დაცვაზე შესამოწმებელი)](#-ფაზა-4-react-core-მოთხოვნები-დაცვაზე-შესამოწმებელი)
 
 ---
 
@@ -30,10 +30,12 @@
   - [x] მკაფიო და მოდულარული ფოლდერების სტრუქტურის შექმნა:
     ```text
     src/
-    ├── api/           # API სერვისები და მოთხოვნები (DummyJSON tech client)
-    ├── components/    # ხელახლა გამოყენებადი UI კომპონენტები (ProductCard, Header, Footer, Skeleton)
-    ├── types/         # TypeScript ინტერფეისები და ტიპები (Product, API responses)
-    ├── App.tsx        # მთავარი გვერდი, კატეგორიების ფილტრი და ლოგიკა
+    ├── api/           # API სერვისები (DummyJSON tech client)
+    ├── components/    # Reusable UI (ProductCard, CartModal, LoginModal, Skeleton, Header, Footer)
+    ├── layouts/       # MainLayout (props.children კომპოზიცია)
+    ├── pages/         # HomePage (პროდუქტების კატალოგი და შესაბამისი state)
+    ├── types/         # TypeScript მოდელები (product, cart, auth)
+    ├── App.tsx        # მთავარი ორკესტრატორი (Cart & Login Lifting State Up)
     └── main.tsx       # აპლიკაციის საწყისი წერტილი
     ```
   - [x] სემანტიკური ჩონჩხის აწყობა (`<header>`, `<main>`, `<footer>`).
@@ -43,36 +45,39 @@
 ## 🌐 ფაზა 2: მონაცემების მიღება და ინტეგრაცია (DummyJSON API)
 
 - [x] **1. TypeScript ტიპების განსაზღვრა**
-  - [x] DummyJSON-ის `GET https://dummyjson.com/products/category/{category}` ენდპოინტის სტრუქტურის შესწავლა.
-  - [x] `Product` და `ProductsResponse` ინტერფეისების აღწერა (`id`, `title`, `price`, `thumbnail`, `category`, `rating` და ა.შ.).
+  - [x] `Product`, `ProductsResponse`, `CartItem` და `User` მოდელები.
 
 - [x] **2. მონაცემების წამოღების ლოგიკა (ტექნიკა / Electronics)**
-  - [x] მაკიაჟისა და სილამაზის ნივთების გამორიცხვა და ფოკუსირება მხოლოდ ტექნიკაზე (`smartphones`, `laptops`, `tablets`, `mobile-accessories`).
-  - [x] მოდულარული API ფუნქციის შექმნა: `getProductsByCategory(category, limit, skip)`.
-  - [x] `useEffect` ჰუკით მონაცემების ასინქრონული ჩატვირთვა გვერდის პირველადი რენდერისას (Mount) და კატეგორიის შეცვლისას (`[selectedCategory]`).
-  - [x] 3 ძირითადი მდგომარეობის (State) სრულყოფილი მართვა:
-    - ⏳ **Loading State** (იტვირთება / ProductSkeleton)
-    - ❌ **Error State** (შეცდომის შეტყობინება და Retry ღილაკი)
-    - ✅ **Success State** (ტექნიკის პროდუქტების სია)
+  - [x] ფოკუსირება მხოლოდ ტექნიკაზე (`smartphones`, `laptops`, `tablets`, `mobile-accessories`).
+  - [x] API ფუნქცია: `getProductsByCategory(category, limit, skip)`.
+  - [x] `useEffect` ჰუკით მონაცემების ჩატვირთვა და კატეგორიის შეცვლისას რეაქცია (`[selectedCategory]`).
+  - [x] 3 მდგომარეობის მართვა: ⏳ Loading, ❌ Error, ✅ Success.
 
 ---
 
 ## 🎨 ფაზა 3: UI კომპონენტები და სემანტიკა
 
 - [x] **1. ProductCard კომპონენტი**
-  - [x] სემანტიკური `<article>` ტეგის გამოყენება.
-  - [x] სურათი `alt` ტექსტით და ასპექტ-რატიოთი.
-  - [x] კატეგორიის ბეიჯი, ბრენდი, რეიტინგი, ფასი და ფასდაკლების პროცენტი.
-  - [x] "დამატება" ინტერაქტიული ღილაკი (`<button type="button">`).
+  - [x] სემანტიკური `<article>` ტეგი, სურათი `alt`-ით, რეიტინგი, ფასი და ფასდაკლების ბეიჯი.
+  - [x] Callback Prop: `onAddToCart`.
 
 - [x] **2. ტექნიკის კატეგორიების ტაბები**
   - [x] სწრაფი გადართვა: 📱 სმარტფონები, 💻 ლეპტოპები, 📟 ტაბლეტები, 🎧 აქსესუარები.
-  - [x] ადაპტაციური Grid ბადე (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`).
+  - [x] ადაპტაციური Grid ბადე.
 
 ---
 
-## 🔍 ფაზა 4: ტესტირება და ხარისხის კონტროლი
+## 🎯 ფაზა 4: React CORE მოთხოვნები (დაცვაზე შესამოწმებელი)
 
-- [x] სემანტიკური HTML5 & a11y სტანდარტების დაცვა (No Div Soup, სწორი Heading იერარქია `<h1>` -> `<h2>` -> `<h3>`).
-- [x] React 19 Cleanup / Memory leak პრევენცია `useEffect`-ში.
-- [x] TypeScript კომპილაციისა და Linters შემოწმება (`npm run build`, `npm run lint` — 0 შეცდომა).
+- [x] **1. `pages/` არქიტექტურა**: `HomePage.tsx` აერთიანებს კომპონენტებსა და state-ს. `App.tsx` სუფთაა.
+- [x] **2. `props.children` კომპოზიცია**: `MainLayout.tsx` იყენებს `{children}`-ს.
+- [x] **3. საერთო Cart State & `localStorage`**:
+  - [x] კალათის მონაცემების შენახვა `localStorage`-ში (`useEffect`-ითა და Lazy Initializer-ით).
+  - [x] `CartModal.tsx`: რაოდენობის შეცვლა (`-` / `+`), წაშლა, სრული თანხის კალკულაცია.
+- [x] **4. Immutable Updates**:
+  - [x] `setCart` იყენებს მხოლოდ `.map()`, `.filter()` და Spread ოპერატორს (`[...cart]`), არავითარი `.push()`.
+- [x] **5. Login State & კონტროლირებადი ფორმა (Controlled Form)**:
+  - [x] `LoginModal.tsx` ინპუტებით (`value` და `onChange`).
+  - [x] `e.preventDefault()`, ვალიდაცია და მომხმარებლის გამოჩენა ჰედერში (`👤 username`).
+- [x] **6. Lifting State Up**: Cart და User მდგომარეობები ცენტრალიზებულია `App.tsx`-ში და შვილებს გადაეცემა Props / Callback Props გზით.
+- [x] **7. Conditional Rendering & Accessibility**: No Div Soup, `<fieldset>`, `<legend>`, `<label htmlFor>`, aria ატრიბუტები.

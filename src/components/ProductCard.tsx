@@ -2,9 +2,10 @@ import type { Product } from '../types/product'
 
 interface ProductCardProps {
   product: Product
+  onAddToCart?: (product: Product) => void // Callback Prop: მშობლის ინფორმირება კალათაში დამატებისას
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   // გამოვთვალოთ საწყისი ფასი ფასდაკლებამდე
   const originalPrice = (product.price / (1 - product.discountPercentage / 100)).toFixed(2)
 
@@ -20,7 +21,7 @@ export function ProductCard({ product }: ProductCardProps) {
             className="h-full w-full object-contain object-center transition-transform duration-300 group-hover:scale-105"
           />
 
-          {/* ფასდაკლების ბეიჯი */}
+          {/* ფასდაკლების ბეიჯი (Conditional Rendering) */}
           {product.discountPercentage > 0 && (
             <span className="absolute top-2 left-2 rounded-lg bg-rose-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
               -{Math.round(product.discountPercentage)}%
@@ -74,10 +75,13 @@ export function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
+        {/* Callback Prop — დაჭერისას ეძახის მშობლის ფუნქციას */}
         <button
           type="button"
+          onClick={() => onAddToCart?.(product)}
+          disabled={product.stock <= 0}
           aria-label={`კალათაში დამატება: ${product.title}`}
-          className="cursor-pointer rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="cursor-pointer rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
           დამატება
         </button>
@@ -85,4 +89,3 @@ export function ProductCard({ product }: ProductCardProps) {
     </article>
   )
 }
-
