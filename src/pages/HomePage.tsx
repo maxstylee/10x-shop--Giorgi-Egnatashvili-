@@ -4,22 +4,15 @@ import { ProductCard } from '../components/ProductCard'
 import { ProductSkeleton } from '../components/ProductSkeleton'
 import type { Product } from '../types/product'
 
-interface HomePageProps {
-  onAddToCart: (product: Product) => void // Callback Prop კალათაში დასამატებლად
-}
-
 /**
- * HomePage — მთავარი გვერდის კომპონენტი
- * იღებს onAddToCart callback prop-ს და გადასცემს თითოეულ ProductCard-ს.
+ * HomePage — მთავარი გვერდი (კატალოგი)
  */
-export function HomePage({ onAddToCart }: HomePageProps) {
-  // 1. State (მდგომარეობები)
+export function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('smartphones')
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  // 2. მონაცემების ხელით განახლება (Refresh ღილაკისთვის)
   const handleRefresh = async () => {
     setIsLoading(true)
     setError(null)
@@ -33,7 +26,6 @@ export function HomePage({ onAddToCart }: HomePageProps) {
     }
   }
 
-  // 3. useEffect — იტვირთება გვერდის გახსნისას და ყოველ ჯერზე, როდესაც კატეგორია იცვლება
   useEffect(() => {
     let isSubscribed = true
 
@@ -67,7 +59,6 @@ export function HomePage({ onAddToCart }: HomePageProps) {
 
   return (
     <section id="products-section" aria-labelledby="products-heading">
-      {/* სექციის სათაური და აღწერა */}
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
@@ -82,7 +73,6 @@ export function HomePage({ onAddToCart }: HomePageProps) {
           </p>
         </div>
 
-        {/* განახლების (Refresh) ღილაკი */}
         <button
           type="button"
           onClick={handleRefresh}
@@ -94,7 +84,7 @@ export function HomePage({ onAddToCart }: HomePageProps) {
         </button>
       </div>
 
-      {/* ტექნიკის კატეგორიების ტაბები (ფილტრი) */}
+      {/* ტექნიკის კატეგორიების ტაბები */}
       <div className="mt-6 flex flex-wrap gap-2 border-b border-gray-200 pb-4 dark:border-gray-800" role="tablist" aria-label="ტექნიკის კატეგორიები">
         {TECH_CATEGORIES.map((category) => {
           const isSelected = selectedCategory === category.slug
@@ -118,7 +108,7 @@ export function HomePage({ onAddToCart }: HomePageProps) {
         })}
       </div>
 
-      {/* 1. Loading State (ჩატვირთვის პროცესი - სკელეტონები) */}
+      {/* 1. Loading State */}
       {isLoading && (
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, index) => (
@@ -127,16 +117,14 @@ export function HomePage({ onAddToCart }: HomePageProps) {
         </div>
       )}
 
-      {/* 2. Error State (შეცდომის ეკრანი) */}
+      {/* 2. Error State */}
       {!isLoading && error && (
         <div role="alert" className="my-8 rounded-2xl border border-red-200 bg-red-50 p-6 text-center dark:border-red-900/50 dark:bg-red-950/30">
           <span className="text-3xl" aria-hidden="true">⚠️</span>
           <h3 className="mt-2 text-base font-semibold text-red-800 dark:text-red-200">
             მონაცემების ჩატვირთვა ვერ მოხერხდა
           </h3>
-          <p className="mt-1 text-sm text-red-600 dark:text-red-300">
-            {error}
-          </p>
+          <p className="mt-1 text-sm text-red-600 dark:text-red-300">{error}</p>
           <button
             type="button"
             onClick={handleRefresh}
@@ -147,22 +135,18 @@ export function HomePage({ onAddToCart }: HomePageProps) {
         </div>
       )}
 
-      {/* 3. Empty State (თუ კატეგორიაში მონაცემი არაა) */}
+      {/* 3. Empty State */}
       {!isLoading && !error && products.length === 0 && (
         <div className="my-12 text-center text-gray-500 dark:text-gray-400">
           <p className="text-lg font-medium">ამ კატეგორიაში პროდუქტები ვერ მოიძებნა</p>
         </div>
       )}
 
-      {/* 4. Success State (ტექნიკის პროდუქტების ბარათები) */}
+      {/* 4. Success State */}
       {!isLoading && !error && products.length > 0 && (
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={onAddToCart}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}

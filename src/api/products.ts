@@ -1,4 +1,4 @@
-import type { ProductsResponse } from '../types/product'
+import type { Product, ProductsResponse } from '../types/product'
 
 const BASE_URL = 'https://dummyjson.com/products'
 
@@ -27,7 +27,6 @@ export async function getProductsByCategory(
   limit = 12,
   skip = 0
 ): Promise<ProductsResponse> {
-  // მაგალითად: https://dummyjson.com/products/category/smartphones?limit=12&skip=0
   const response = await fetch(`${BASE_URL}/category/${category}?limit=${limit}&skip=${skip}`)
 
   if (!response.ok) {
@@ -35,5 +34,20 @@ export async function getProductsByCategory(
   }
 
   const data: ProductsResponse = await response.json()
+  return data
+}
+
+/**
+ * DummyJSON API-დან ერთი კონკრეტული პროდუქტის წამოღება ID-ის მიხედვით
+ * @param id პროდუქტის ID
+ */
+export async function getProductById(id: string | number): Promise<Product> {
+  const response = await fetch(`${BASE_URL}/${id}`)
+
+  if (!response.ok) {
+    throw new Error(`პროდუქტის წამოღება ვერ მოხერხდა: ${response.status} ${response.statusText}`)
+  }
+
+  const data: Product = await response.json()
   return data
 }

@@ -1,141 +1,39 @@
-import { useEffect, useState } from 'react'
-import { CartModal } from './components/CartModal'
-import { LoginModal } from './components/LoginModal'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { AuthProvider } from './context/AuthProvider'
+import { CartProvider } from './context/CartProvider'
 import { MainLayout } from './layouts/MainLayout'
+import { CartPage } from './pages/CartPage'
+import { CheckoutPage } from './pages/CheckoutPage'
 import { HomePage } from './pages/HomePage'
-import type { User } from './types/auth'
-import type { CartItem } from './types/cart'
-import type { Product } from './types/product'
-
-const CART_STORAGE_KEY = '10x_shop_cart'
-const USER_STORAGE_KEY = '10x_shop_user'
+import { LoginPage } from './pages/LoginPage'
+import { NotFoundPage } from './pages/NotFoundPage'
+import { ProductDetailPage } from './pages/ProductDetailPage'
 
 /**
- * App — Root კომპონენტი
- * მართავს საერთო Cart და Login მდგომარეობებს (Lifting State Up)
- * და localStorage-თან სინქრონიზაციას.
+ * App — ძირითადი Root კომპონენტი
+ * 1. BrowserRouter: უზრუნველყოფს Client-Side Routing-ს reload-ის გარეშე.
+ * 2. AuthProvider & CartProvider: გლობალური მდგომარეობის მართვა (Context API).
+ * 3. MainLayout: საერთო ჩონჩხი (Header, Footer, props.children).
+ * 4. Routes: 6 ძირითადი როუტი (/, /products/:id, /cart, /login, /checkout, *).
  */
 export function App() {
-  // 1. Cart State (Lazy Initializer)
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY)
-      return savedCart ? JSON.parse(savedCart) : []
-    } catch {
-      return []
-    }
-  })
-
-  // 2. User State (Login / Auth)
-  const [user, setUser] = useState<User | null>(() => {
-    try {
-      const savedUser = localStorage.getItem(USER_STORAGE_KEY)
-      return savedUser ? JSON.parse(savedUser) : null
-    } catch {
-      return null
-    }
-  })
-
-  // მოდალების გახსნა/დახურვის State
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false)
-  const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false)
-
-  // 3. Cart-ის სინქრონიზაცია localStorage-ში
-  useEffect(() => {
-    try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart))
-    } catch (err) {
-      console.error('კალათის შენახვა localStorage-ში ვერ მოხერხდა', err)
-    }
-  }, [cart])
-
-  // 4. Cart Immutable Actions: დამატება
-  const handleAddToCart = (product: Product) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.product.id === product.id)
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      }
-      return [...prevCart, { product, quantity: 1 }]
-    })
-  }
-
-  // Cart Immutable Actions: რაოდენობის შეცვლა
-  const handleUpdateQuantity = (productId: number, newQuantity: number) => {
-    setCart((prevCart) => {
-      if (newQuantity <= 0) {
-        return prevCart.filter((item) => item.product.id !== productId)
-      }
-      return prevCart.map((item) =>
-        item.product.id === productId ? { ...item, quantity: newQuantity } : item
-      )
-    })
-  }
-
-  // Cart Immutable Actions: წაშლა
-  const handleRemoveFromCart = (productId: number) => {
-    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId))
-  }
-
-  // Cart: გასუფთავება
-  const handleClearCart = () => {
-    setCart([])
-  }
-
-  // 5. Auth Actions: Login & Logout
-  const handleLogin = (newUser: User) => {
-    setUser(newUser)
-    try {
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser))
-    } catch (err) {
-      console.error('მომხმარებლის შენახვა ვერ მოხერხდა', err)
-    }
-  }
-
-  const handleLogout = () => {
-    setUser(null)
-    try {
-      localStorage.removeItem(USER_STORAGE_KEY)
-    } catch (err) {
-      console.error('მომხმარებლის წაშლა ვერ მოხერხდა', err)
-    }
-  }
-
-  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
-
   return (
-    <>
-      <MainLayout
-        cartCount={totalCartCount}
-        onOpenCart={() => setIsCartOpen(true)}
-        user={user}
-        onOpenLogin={() => setIsLoginOpen(true)}
-        onLogout={handleLogout}
-      >
-        <HomePage onAddToCart={handleAddToCart} />
-      </MainLayout>
-
-      {/* კალათის მოდალი */}
-      <CartModal
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cart={cart}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveFromCart={handleRemoveFromCart}
-        onClearCart={handleClearCart}
-      />
-
-      {/* ავტორიზაციის მოდალი (კონტროლირებადი ფორმა) */}
-      <LoginModal
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onLogin={handleLogin}
-      />
-    </>
+    <BrowserRouter>
+      <AuthProvider>
+        <CartProvider>
+          <MainLayout>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/products/:id" element={<ProductDetailPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </MainLayout>
+        </CartProvider>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 
