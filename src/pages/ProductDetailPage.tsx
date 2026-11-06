@@ -3,9 +3,11 @@ import { Link, useParams } from 'react-router-dom'
 import { getProductById } from '../api/products'
 import { useCart } from '../hooks/useCart'
 import type { Product } from '../types/product'
+import { NotFoundPage } from './NotFoundPage'
 
 /**
  * ProductDetailPage — პროდუქტის დეტალური გვერდი (/products/:id)
+ * თუ პროდუქტი არ არსებობს (მაგ: /products/999999), აჩვენებს NotFoundPage-ს.
  */
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -58,21 +60,9 @@ export function ProductDetailPage() {
     )
   }
 
+  // თუ პროდუქტი არ არსებობს (მაგ: 999999) ან შეცდომაა -> NotFound გვერდი
   if (error || !product) {
-    return (
-      <div role="alert" className="my-12 rounded-2xl border border-red-200 bg-red-50 p-8 text-center dark:border-red-900/50 dark:bg-red-950/30">
-        <span className="text-4xl" aria-hidden="true">⚠️</span>
-        <h2 className="mt-2 text-lg font-bold text-red-800 dark:text-red-200">
-          {error || 'პროდუქტი ვერ მოიძებნა'}
-        </h2>
-        <Link
-          to="/"
-          className="mt-4 inline-block rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
-        >
-          ⬅️ კატალოგში დაბრუნება
-        </Link>
-      </div>
-    )
+    return <NotFoundPage />
   }
 
   const originalPrice = (product.price / (1 - product.discountPercentage / 100)).toFixed(2)

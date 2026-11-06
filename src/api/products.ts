@@ -45,7 +45,7 @@ export async function getProductById(id: string | number): Promise<Product> {
   const response = await fetch(`${BASE_URL}/${id}`)
 
   if (!response.ok) {
-    throw new Error(`პროდუქტის წამოღება ვერ მოხერხდა: ${response.status} ${response.statusText}`)
+    throw new Error(`პროდუქტის ვერ მოიძებნა: ${response.status} ${response.statusText}`)
   }
 
   const data: Product = await response.json()

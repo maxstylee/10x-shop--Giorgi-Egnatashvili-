@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useCart } from '../hooks/useCart'
 
@@ -24,16 +24,24 @@ export function Header() {
           </div>
         </Link>
 
-        {/* ნავიგაცია */}
+        {/* ნავიგაცია NavLink-ის active კლასით */}
         <nav aria-label="მთავარი ნავიგაცია" className="flex items-center gap-3">
-          <Link
+          {/* კატალოგის NavLink */}
+          <NavLink
             to="/"
-            className="hidden sm:inline-block text-sm font-medium text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition"
+            end
+            className={({ isActive }) =>
+              `hidden sm:inline-block text-sm font-medium transition ${
+                isActive
+                  ? 'text-indigo-600 dark:text-indigo-400 font-bold border-b-2 border-indigo-600 pb-0.5'
+                  : 'text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400'
+              }`
+            }
           >
             კატალოგი
-          </Link>
+          </NavLink>
 
-          {/* მომხმარებლის სტატუსი ან შესვლის ბმული */}
+          {/* მომხმარებლის სტატუსი ან შესვლის NavLink */}
           {user ? (
             <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-1.5 dark:border-gray-800 dark:bg-gray-900">
               <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
@@ -48,20 +56,32 @@ export function Header() {
               </button>
             </div>
           ) : (
-            <Link
+            <NavLink
               to="/login"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800 transition"
+              className={({ isActive }) =>
+                `inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-semibold transition ${
+                  isActive
+                    ? 'border-indigo-600 bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-500 dark:text-indigo-300 shadow-xs'
+                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800'
+                }`
+              }
             >
               <span>🔑</span>
               <span>შესვლა</span>
-            </Link>
+            </NavLink>
           )}
 
-          {/* კალათის გვერდზე გადასვლა ბეიჯით */}
-          <Link
+          {/* კალათის NavLink active ეფექტითა და ბეიჯით */}
+          <NavLink
             to="/cart"
             aria-label={`კალათა, ${totalCount} პროდუქტი`}
-            className="relative inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:bg-indigo-700 active:scale-95"
+            className={({ isActive }) =>
+              `relative inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold text-white transition active:scale-95 ${
+                isActive
+                  ? 'bg-indigo-700 shadow-md ring-2 ring-indigo-400 ring-offset-2 dark:ring-offset-gray-900'
+                  : 'bg-indigo-600 shadow-sm shadow-indigo-500/25 hover:bg-indigo-700'
+              }`
+            }
           >
             <span aria-hidden="true">🛒</span>
             <span className="hidden sm:inline">კალათა</span>
@@ -70,7 +90,7 @@ export function Header() {
                 {totalCount}
               </span>
             )}
-          </Link>
+          </NavLink>
         </nav>
       </div>
     </header>

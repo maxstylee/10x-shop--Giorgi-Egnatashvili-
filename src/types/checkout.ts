@@ -6,3 +6,4 @@ export interface CheckoutFormData {
   city: string
   postalCode: string
 }
+

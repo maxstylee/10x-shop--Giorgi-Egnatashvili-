@@ -10,11 +10,16 @@ export function ProductSkeleton() {
           <div className="h-3 w-4/5 rounded bg-gray-200 dark:bg-gray-800" />
         </div>
       </div>
-      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-        <div className="h-6 w-16 rounded bg-gray-200 dark:bg-gray-800" />
-        <div className="h-8 w-20 rounded-xl bg-gray-200 dark:bg-gray-800" />
+      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 space-y-2.5">
+        <div className="flex items-center justify-between">
+          <div className="h-6 w-20 rounded bg-gray-200 dark:bg-gray-800" />
+          <div className="h-4 w-16 rounded bg-gray-200 dark:bg-gray-800" />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="h-8 rounded-xl bg-gray-200 dark:bg-gray-800" />
+          <div className="h-8 rounded-xl bg-gray-200 dark:bg-gray-800" />
+        </div>
       </div>
     </article>
   )
 }
-

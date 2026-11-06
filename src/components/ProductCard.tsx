@@ -65,11 +65,12 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      {/* ფასი და ღილაკები */}
-      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-        <div>
+      {/* ფასი და კომპაქტური ღილაკები */}
+      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 space-y-2.5">
+        {/* ფასი და მარაგის სტატუსი ერთ ხაზზე */}
+        <div className="flex items-baseline justify-between">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-lg font-extrabold text-gray-900 dark:text-white">
+            <span className="text-lg font-black text-gray-900 dark:text-white">
               ${product.price.toFixed(2)}
             </span>
             {product.discountPercentage > 0 && (
@@ -78,17 +79,17 @@ export function ProductCard({ product }: ProductCardProps) {
               </span>
             )}
           </div>
-          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+          <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
             {product.stock > 0 ? `მარაგშია: ${product.stock}` : 'ამოიწურა'}
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* კომპაქტური ღილაკების ბადე (არასდროს ჩამოიჭრება) */}
+        <div className="grid grid-cols-2 gap-2">
           {/* დეტალებზე გადასვლა */}
           <Link
             to={`/products/${product.id}`}
-            className="rounded-xl border border-gray-200 px-2.5 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition"
-            title="დეტალების ნახვა"
+            className="flex items-center justify-center rounded-xl border border-gray-200 bg-gray-50/70 py-2 text-center text-xs font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-200 dark:hover:bg-gray-700 transition"
           >
             დეტალები
           </Link>
@@ -99,9 +100,10 @@ export function ProductCard({ product }: ProductCardProps) {
             onClick={() => addToCart(product)}
             disabled={product.stock <= 0}
             aria-label={`კალათაში დამატება: ${product.title}`}
-            className="cursor-pointer rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="cursor-pointer flex items-center justify-center gap-1 rounded-xl bg-indigo-600 py-2 text-center text-xs font-semibold text-white shadow-xs transition hover:bg-indigo-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            დამატება
+            <span>+</span>
+            <span>დამატება</span>
           </button>
         </div>
       </div>

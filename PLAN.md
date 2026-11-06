@@ -1,8 +1,25 @@
 # 🛍️ 10x-Shop — Project Implementation Plan (PLAN.md)
 
-> **სტატუსი:** 🚀 CORE სრულად დასრულებულია (8 / 8 ნაბიჯი)  
+> **სტატუსი:** 🚀 CORE & P0.1 სრულად დასრულებულია  
 > **სტეკი:** React 19 • TypeScript • Vite • Tailwind CSS v4 • React Router v7 • DummyJSON API  
 > **ავტორი:** Giorgi Egnatashvili  
+
+## 📌 P0.1 — Routing და Layout (შემოწმებადი მოთხოვნები)
+
+- [x] **1. ერთი BrowserRouter & ერთი Layout მარშრუტი**
+  - [x] `BrowserRouter` გადატანილია `main.tsx`-ში აპლიკაციის გარსაცმად.
+  - [x] `<Route element={<MainLayout />}>` შეიცავს `<Outlet />`-ს, Header-სა და Footer-ს (Header არ მეორდება).
+- [x] **2. NavLink-ის active კლასი**
+  - [x] აქტიური გვერდის ბმული გამოკვეთილია ვიზუალურად (`isActive` სტილებით კატალოგზე, კალათასა და შესვლაზე).
+- [x] **3. `*` მარშრუტი -> NotFound გვერდი**
+  - [x] სათაური: `Page not found`
+  - [x] ტექსტი: `The page you are looking for does not exist.`
+  - [x] ბმული: `Go to catalog` -> `/`
+  - [x] იგივე გვერდი ჩანს არარსებულ პროდუქტზეც (`/products/999999`).
+- [x] **4. ScrollToTop კომპონენტი**
+  - [x] მარშრუტის ცვლილებისას გვერდი იწყება ზემოდან (`useLocation` + `useEffect` + `window.scrollTo(0, 0)`).
+- [x] **5. CORE როუტინგის ინსტრუმენტები**
+  - [x] `BrowserRouter`, `Routes`, `Route`, `Link`, `NavLink`, `useParams`, `useNavigate`, `useLocation` და `<Outlet />`.
 
 ---
 
@@ -14,7 +31,7 @@
   - [x] `npm run typecheck` (`tsc --noEmit`) და `npm run build` სრულდება 0 შეცდომით.
 
 - [x] **2. PLAN.md & Git ისტორია**
-  - [x] PLAN.md აღწერს მიზნებსა და პროგრესს.
+  - [x] PLAN.md აღწერს მიზნებს, არქიტექტურასა და პროგრესს.
   - [x] GitHub რეპოზიტორია შინაარსიანი Git ისტორიით (Conventional Commits).
 
 - [x] **3. საჭირო TypeScript ტიპები**
@@ -24,14 +41,8 @@
   - [x] `CheckoutFormData` (`src/types/checkout.ts`).
 
 - [x] **4. ფუნქციური კომპონენტები, Layout და React Router**
-  - [x] `MainLayout` `props.children` კომპოზიციით (Header, Footer, Main).
-  - [x] 6 როუტი reload-ის გარეშე:
-    - `/` — მთავარი გვერდი (კატალოგი და ფილტრები).
-    - `/products/:id` — პროდუქტის დეტალური გვერდი.
-    - `/cart` — კალათის სრული გვერდი.
-    - `/login` — ავტორიზაციის გვერდი.
-    - `/checkout` — შეკვეთის გაფორმება.
-    - `*` — 404 Not Found გვერდი.
+  - [x] `MainLayout` `<Outlet />`-ით (Header, Footer, Main).
+  - [x] 6 როუტი reload-ის გარეშე (`/`, `/products/:id`, `/cart`, `/login`, `/checkout`, `*`).
 
 - [x] **5. AuthContext & Controlled Login Form**
   - [x] `AuthContext` და `AuthProvider` (Username, Email, `isAuthenticated`).
@@ -53,3 +64,4 @@
   - [x] პროდუქტების რენდერი `map()`-ითა და სტაბილური `key={product.id}`-ით.
   - [x] ბარათიდან დეტალებზე გადასვლა: `<Link to="/products/:id">` და "დეტალები" ღილაკი.
   - [x] კალათაში დამატება `useCart().addToCart(product)`-ით.
+  - [x] კომპაქტური UI: ფასი და მარაგი ერთ ხაზზე, ღილაკები 2-სვეტიან ბადეში (`grid grid-cols-2 gap-2`).
