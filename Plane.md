@@ -6,47 +6,6 @@
 
 ---
 
-## 📁 პროექტის ფაილური არქიტექტურა (Architecture Tree)
-
-```text
-src/
-├── api/
-│   └── products.ts         # DummyJSON API მოთხოვნები (კატეგორიები და დეტალები)
-├── components/
-│   ├── Header.tsx          # ნავიგაცია NavLink-ის active კლასითა და კალათის ბეიჯით
-│   ├── Footer.tsx          # სემანტიკური ფუტერი
-│   ├── ProductCard.tsx     # კომპაქტური ბარათი (ფასი/მარაგი + დეტალები/დამატება ღილაკები)
-│   ├── ProductSkeleton.tsx # ჩატვირთვის ჩონჩხი შესაბამისი 2-სვეტიანი ბადით
-│   └── ScrollToTop.tsx     # მარშრუტის შეცვლისას გვერდის თავში გადახვევა
-├── context/
-│   ├── authContext.ts      # AuthContext შექმნა და ტიპები
-│   ├── AuthProvider.tsx    # AuthProvider კომპონენტი (localStorage სინქრონიზაცია)
-│   ├── cartContext.ts      # CartContext შექმნა და ტიპები
-│   └── CartProvider.tsx    # CartProvider კომპონენტი (localStorage სინქრონიზაცია)
-├── hooks/
-│   ├── useAuth.ts          # custom hook ავტორიზაციისთვის
-│   └── useCart.ts          # custom hook კალათისთვის
-├── layouts/
-│   └── MainLayout.tsx      # Layout მარშრუტი (Header + <Outlet /> + Footer)
-├── pages/
-│   ├── HomePage.tsx        # მთავარი გვერდი (კატალოგი, ტექნიკის ფილტრები, გრიდი)
-│   ├── ProductDetailPage.tsx # პროდუქტის დეტალური გვერდი (/products/:id)
-│   ├── CartPage.tsx        # კალათის სრული გვერდი (/cart)
-│   ├── LoginPage.tsx       # კონტროლირებადი ავტორიზაციის ფორმა (/login)
-│   ├── CheckoutPage.tsx    # დაცული შეკვეთის ფორმა (/checkout)
-│   └── NotFoundPage.tsx    # 404 გვერდი (სათაური "Page not found")
-├── types/
-│   ├── auth.ts             # User ინტერფეისი
-│   ├── cart.ts             # CartItem ინტერფეისი
-│   ├── checkout.ts         # CheckoutFormData ინტერფეისი
-│   └── product.ts          # Product და ProductsResponse ინტერფეისები
-├── App.tsx                 # Routes და <Route element={<MainLayout />}>
-├── main.tsx                # Entry point: BrowserRouter, ScrollToTop, Auth/Cart პროვაიდერები
-└── index.css               # Tailwind CSS v4 დირექტივები
-```
-
----
-
 ## 📌 P0.1 — Routing და Layout (შემოწმებადი მოთხოვნები)
 
 - [x] **1. ერთი BrowserRouter & ერთი Layout მარშრუტი**
@@ -74,7 +33,7 @@ src/
   - [x] `npm run typecheck` (`tsc --noEmit`) და `npm run build` სრულდება 0 შეცდომით.
 
 - [x] **2. PLAN.md & Git ისტორია**
-  - [x] PLAN.md აღწერს მიზნებს, არქიტექტურასა და პროგრესს.
+  - [x] PLAN.md აღწერს მიზნებსა და პროგრესს.
   - [x] GitHub რეპოზიტორია შინაარსიანი Git ისტორიით (Conventional Commits).
 
 - [x] **3. საჭირო TypeScript ტიპები**

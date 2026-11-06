@@ -4,6 +4,8 @@
 > **სტეკი:** React 19 • TypeScript • Vite • Tailwind CSS v4 • React Router v7 • DummyJSON API  
 > **ავტორი:** Giorgi Egnatashvili  
 
+---
+
 ## 📌 P0.1 — Routing და Layout (შემოწმებადი მოთხოვნები)
 
 - [x] **1. ერთი BrowserRouter & ერთი Layout მარშრუტი**
@@ -31,7 +33,7 @@
   - [x] `npm run typecheck` (`tsc --noEmit`) და `npm run build` სრულდება 0 შეცდომით.
 
 - [x] **2. PLAN.md & Git ისტორია**
-  - [x] PLAN.md აღწერს მიზნებს, არქიტექტურასა და პროგრესს.
+  - [x] PLAN.md აღწერს მიზნებსა და პროგრესს.
   - [x] GitHub რეპოზიტორია შინაარსიანი Git ისტორიით (Conventional Commits).
 
 - [x] **3. საჭირო TypeScript ტიპები**
