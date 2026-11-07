@@ -1,11 +1,28 @@
-import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import { useAuth } from '../hooks/useAuth'
 
 /**
+ * Yup ვალიდაციის სქემა (Validation Schema)
+ * განსაზღვრავს ველების ტიპებს, სავალდებულოობასა და შეცდომის შეტყობინებებს.
+ */
+const loginValidationSchema = Yup.object({
+  username: Yup.string()
+    .trim()
+    .required('მომხმარებლის სახელი სავალდებულოა'),
+  password: Yup.string()
+    .required('პაროლი სავალდებულოა')
+    .min(6, 'პაროლი უნდა შედგებოდეს მინიმუმ 6 სიმბოლოსგან'),
+})
+
+export type LoginFormValues = Yup.InferType<typeof loginValidationSchema>
+
+/**
  * LoginPage — ავტორიზაციის გვერდი (/login)
- * კონტროლირებადი ფორმა (Controlled Form) ვალიდაციით.
- * წარმატებული შესვლის შემდეგ გადაამისამართებს წინა გვერდზე (მაგ. /checkout-ზე).
+ * რეალიზებულია Formik + Yup ბიბლიოთეკებით:
+ * - Formik: მართავს ფორმის მდგომარეობას (values), შეხებას (touched), შეცდომებს (errors) და submit-ს.
+ * - Yup: აწესებს ვალიდაციის დეკლარაციულ წესებს.
  */
 export function LoginPage() {
   const { login, isAuthenticated } = useAuth()
@@ -15,53 +32,43 @@ export function LoginPage() {
   // საიდან მოვიდა მომხმარებელი (მაგ. /checkout)
   const from = (location.state as { from?: string })?.from || '/'
 
-  // კონტროლირებადი ფორმის State
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({})
-
   // თუ უკვე ავტორიზებულია, გადავამისამართოთ
   if (isAuthenticated) {
     navigate(from, { replace: true })
     return null
   }
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  // Formik Hook-ის ინიციალიზაცია
+  const formik = useFormik<LoginFormValues>({
+    initialValues: {
+      username: '',
+      password: '',
+    },
+    validationSchema: loginValidationSchema,
+    onSubmit: (values) => {
+      // 1. AuthContext-ის განახლება
+      login({
+        username: values.username.trim(),
+        email: `${values.username.trim().toLowerCase()}@example.com`,
+      })
 
-    const newErrors: { username?: string; password?: string } = {}
+      // 2. გადამისამართება დანიშნულების გვერდზე (მაგ: /checkout)
+      navigate(from, { replace: true })
+    },
+  })
 
-    // Username / Password required ვალიდაცია
-    if (!username.trim()) {
-      newErrors.username = 'მომხმარებლის სახელი სავალდებულოა'
-    }
-
-    if (!password) {
-      newErrors.password = 'პაროლი სავალდებულოა'
-    } else if (password.length < 4) {
-      newErrors.password = 'პაროლი უნდა შედგებოდეს მინიმუმ 4 სიმბოლოსგან'
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      return
-    }
-
-    // AuthContext-ის განახლება
-    login({
-      username: username.trim(),
-      email: `${username.trim().toLowerCase()}@example.com`,
-    })
-
-    // გადამისამართება დანიშნულების გვერდზე (მაგ: /checkout)
-    navigate(from, { replace: true })
-  }
+  // ველების ვალიდაციის შემოწმების დამხმარე ცვლადები
+  const usernameError = formik.touched.username && formik.errors.username
+  const passwordError = formik.touched.password && formik.errors.password
 
   return (
     <section className="mx-auto max-w-md py-8">
       {/* შეტყობინება, თუ მომხმარებელი /checkout-დან გადმოამისამართეს */}
       {from === '/checkout' && (
-        <div role="alert" className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs font-semibold text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">
+        <div
+          role="alert"
+          className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs font-semibold text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300"
+        >
           ⚠️ შეკვეთის გასაფორმებლად გთხოვთ ჯერ გაიაროთ ავტორიზაცია.
         </div>
       )}
@@ -77,11 +84,12 @@ export function LoginPage() {
           </p>
         </div>
 
-        {/* კონტროლირებადი ფორმა */}
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        {/* Formik კონტროლირებადი ფორმა */}
+        <form onSubmit={formik.handleSubmit} noValidate className="mt-6 space-y-4">
           <fieldset className="space-y-4 border-0 p-0 m-0">
             <legend className="sr-only">შესვლის მონაცემები</legend>
 
+            {/* Username ველი */}
             <div>
               <label
                 htmlFor="username"
@@ -91,24 +99,28 @@ export function LoginPage() {
               </label>
               <input
                 id="username"
+                name="username"
                 type="text"
-                value={username}
-                onChange={(e) => {
-                  setUsername(e.target.value)
-                  if (errors.username) setErrors((prev) => ({ ...prev, username: undefined }))
-                }}
-                aria-invalid={!!errors.username}
-                aria-describedby={errors.username ? 'username-error' : undefined}
-                className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                value={formik.values.username}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                aria-invalid={Boolean(usernameError)}
+                aria-describedby={usernameError ? 'username-error' : undefined}
+                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition text-gray-900 dark:text-white dark:bg-gray-800 outline-hidden ${
+                  usernameError
+                    ? 'border-rose-500 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20'
+                    : 'border-gray-300 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700'
+                }`}
                 placeholder="მაგ: giorgi"
               />
-              {errors.username && (
-                <p id="username-error" className="mt-1 text-xs text-rose-500 font-medium">
-                  {errors.username}
+              {usernameError && (
+                <p id="username-error" role="alert" className="mt-1 text-xs text-rose-500 font-medium">
+                  {formik.errors.username}
                 </p>
               )}
             </div>
 
+            {/* Password ველი */}
             <div>
               <label
                 htmlFor="password"
@@ -118,20 +130,23 @@ export function LoginPage() {
               </label>
               <input
                 id="password"
+                name="password"
                 type="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value)
-                  if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }))
-                }}
-                aria-invalid={!!errors.password}
-                aria-describedby={errors.password ? 'password-error' : undefined}
-                className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                aria-invalid={Boolean(passwordError)}
+                aria-describedby={passwordError ? 'password-error' : undefined}
+                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition text-gray-900 dark:text-white dark:bg-gray-800 outline-hidden ${
+                  passwordError
+                    ? 'border-rose-500 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20'
+                    : 'border-gray-300 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700'
+                }`}
                 placeholder="••••••••"
               />
-              {errors.password && (
-                <p id="password-error" className="mt-1 text-xs text-rose-500 font-medium">
-                  {errors.password}
+              {passwordError && (
+                <p id="password-error" role="alert" className="mt-1 text-xs text-rose-500 font-medium">
+                  {formik.errors.password}
                 </p>
               )}
             </div>
@@ -139,9 +154,10 @@ export function LoginPage() {
 
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-xl bg-indigo-600 py-3 text-center text-xs font-bold text-white shadow-md shadow-indigo-500/25 transition hover:bg-indigo-700 active:scale-98"
+            disabled={formik.isSubmitting}
+            className="mt-5 w-full cursor-pointer rounded-xl bg-indigo-600 py-3 text-center text-xs font-bold text-white shadow-md shadow-indigo-500/25 transition hover:bg-indigo-700 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            შესვლა
+            {formik.isSubmitting ? 'მიმდინარეობს...' : 'შესვლა'}
           </button>
 
           <div className="text-center pt-2">
