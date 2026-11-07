@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
 
 /**
- * NotFoundPage — 404 გვერდი (* მარშრუტი და არარსებული რესურსები)
- * სათაური: "Page not found"
- * ტექსტი: "The page you are looking for does not exist."
- * ბმული: "Go to catalog" -> /
+ * NotFoundPage — 404 Route View (* path and missing items)
+ * Title: "Page not found"
+ * Message: "The page you are looking for does not exist."
+ * CTA: "Go to catalog" -> /
  */
 export function NotFoundPage() {
   return (

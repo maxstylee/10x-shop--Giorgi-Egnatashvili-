@@ -8,19 +8,19 @@ export interface TechCategory {
   icon: string
 }
 
-// ტექნიკის კატეგორიების სია
+// Tech Categories List
 export const TECH_CATEGORIES: TechCategory[] = [
-  { slug: 'smartphones', name: 'სმარტფონები', icon: '📱' },
-  { slug: 'laptops', name: 'ლეპტოპები', icon: '💻' },
-  { slug: 'tablets', name: 'ტაბლეტები', icon: '📟' },
-  { slug: 'mobile-accessories', name: 'აქსესუარები', icon: '🎧' },
+  { slug: 'smartphones', name: 'Smartphones', icon: '📱' },
+  { slug: 'laptops', name: 'Laptops', icon: '💻' },
+  { slug: 'tablets', name: 'Tablets', icon: '📟' },
+  { slug: 'mobile-accessories', name: 'Accessories', icon: '🎧' },
 ]
 
 /**
- * DummyJSON API-დან ტექნიკის წამოღება არჩეული კატეგორიის მიხედვით
- * @param category კატეგორიის slug (მაგ. 'smartphones', 'laptops')
- * @param limit რამდენი პროდუქტი წამოვიღოთ (ნაგულისხმევია 12)
- * @param skip რამდენი პროდუქტი გამოვტოვოთ (ნაგულისხმევია 0)
+ * Fetch products by selected category from DummyJSON API
+ * @param category category slug (e.g. 'smartphones', 'laptops')
+ * @param limit number of products to fetch (default: 12)
+ * @param skip number of products to skip (default: 0)
  */
 export async function getProductsByCategory(
   category: string,
@@ -30,7 +30,7 @@ export async function getProductsByCategory(
   const response = await fetch(`${BASE_URL}/category/${category}?limit=${limit}&skip=${skip}`)
 
   if (!response.ok) {
-    throw new Error(`სერვერის შეცდომა: ${response.status} ${response.statusText}`)
+    throw new Error(`Server error: ${response.status} ${response.statusText}`)
   }
 
   const data: ProductsResponse = await response.json()
@@ -38,14 +38,14 @@ export async function getProductsByCategory(
 }
 
 /**
- * DummyJSON API-დან ერთი კონკრეტული პროდუქტის წამოღება ID-ის მიხედვით
- * @param id პროდუქტის ID
+ * Fetch single product details by ID from DummyJSON API
+ * @param id Product ID
  */
 export async function getProductById(id: string | number): Promise<Product> {
   const response = await fetch(`${BASE_URL}/${id}`)
 
   if (!response.ok) {
-    throw new Error(`პროდუქტის ვერ მოიძებნა: ${response.status} ${response.statusText}`)
+    throw new Error(`Product not found: ${response.status} ${response.statusText}`)
   }
 
   const data: Product = await response.json()

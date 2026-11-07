@@ -6,12 +6,7 @@ import type { Product } from '../types/product'
 import { NotFoundPage } from './NotFoundPage'
 
 /**
- * ProductDetailPage — პროდუქტის დეტალური გვერდი (/products/:id)
- * მოიცავს:
- * 1. სურათების გალერეას (ფოტოს არჩევა)
- * 2. რაოდენობის ასარჩევ მრიცხველს (- / +)
- * 3. Add to Cart ფუნქციონალს არჩეული რაოდენობით
- * 4. არასწორ ID-ზე (მაგ: 999999) უსაფრთხო გადამისამართებას NotFoundPage-ზე.
+ * ProductDetailPage — Product Detail View (/products/:id)
  */
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -41,7 +36,7 @@ export function ProductDetailPage() {
         }
       } catch (err) {
         if (isSubscribed) {
-          setError(err instanceof Error ? err.message : 'პროდუქტის ჩატვირთვა ვერ მოხერხდა')
+          setError(err instanceof Error ? err.message : 'Failed to load product details')
         }
       } finally {
         if (isSubscribed) {
@@ -67,7 +62,7 @@ export function ProductDetailPage() {
     )
   }
 
-  // თუ პროდუქტი არ არსებობს (მაგ: 999999) ან შეცდომაა -> NotFound გვერდი
+  // If product does not exist or fetch fails -> NotFoundPage
   if (error || !product) {
     return <NotFoundPage />
   }
@@ -84,17 +79,17 @@ export function ProductDetailPage() {
 
   return (
     <article className="space-y-6">
-      {/* უკან დაბრუნების ბმული */}
+      {/* Back to Catalog Link */}
       <Link
         to="/"
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition"
       >
         <span>←</span>
-        <span>კატალოგში დაბრუნება</span>
+        <span>Back to catalog</span>
       </Link>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
-        {/* 1. სურათების გალერეა (ინტერაქტიული ფოტოს არჩევა) */}
+        {/* 1. Image Gallery */}
         <div className="space-y-4">
           <div className="aspect-square w-full overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <img
@@ -104,7 +99,7 @@ export function ProductDetailPage() {
             />
           </div>
 
-          {/* დამატებითი სურათების მინიატურები */}
+          {/* Thumbnails */}
           {product.images && product.images.length > 1 && (
             <div className="flex gap-3 overflow-x-auto pb-2">
               {product.images.map((img, idx) => (
@@ -112,21 +107,21 @@ export function ProductDetailPage() {
                   key={idx}
                   type="button"
                   onClick={() => setSelectedImage(img)}
-                  aria-label={`ფოტოს ნახვა ${idx + 1}`}
+                  aria-label={`View photo ${idx + 1}`}
                   className={`h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-xl border bg-white p-1 transition dark:bg-gray-900 ${
                     selectedImage === img
                       ? 'border-indigo-600 ring-2 ring-indigo-500/20'
                       : 'border-gray-200 hover:border-gray-400 dark:border-gray-800'
                   }`}
                 >
-                  <img src={img} alt={`${product.title} - ${idx}`} className="h-full w-full object-contain" />
+                  <img src={img} alt={`${product.title} - ${idx + 1}`} className="h-full w-full object-contain" />
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        {/* 2. პროდუქტის დეტალები */}
+        {/* 2. Product Information */}
         <div className="flex flex-col justify-between">
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
@@ -135,7 +130,7 @@ export function ProductDetailPage() {
               </span>
               {product.brand && (
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  ბრენდი: <strong className="text-gray-800 dark:text-gray-200">{product.brand}</strong>
+                  Brand: <strong className="text-gray-800 dark:text-gray-200">{product.brand}</strong>
                 </span>
               )}
               <span className="text-xs font-semibold text-amber-500">
@@ -151,7 +146,7 @@ export function ProductDetailPage() {
               {product.description}
             </p>
 
-            {/* ფასი */}
+            {/* Price Box */}
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5 dark:border-gray-800 dark:bg-gray-900/50">
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -163,29 +158,29 @@ export function ProductDetailPage() {
                       ${originalPrice}
                     </span>
                     <span className="rounded-lg bg-rose-500 px-2 py-0.5 text-xs font-bold text-white">
-                      -{Math.round(product.discountPercentage)}% ფასდაკლება
+                      -{Math.round(product.discountPercentage)}% OFF
                     </span>
                   </>
                 )}
               </div>
               <p className="mt-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                {product.stock > 0 ? `✓ მარაგშია ${product.stock} ცალი` : '✕ მარაგი ამოიწურა'}
+                {product.stock > 0 ? `✓ In stock (${product.stock} available)` : '✕ Out of stock'}
               </p>
             </div>
           </div>
 
-          {/* 3. ინტერაქტიული რაოდენობის არჩევა და Add to Cart */}
+          {/* 3. Interactive Quantity Selector and Add to Cart */}
           <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 space-y-4">
             <div className="flex items-center gap-4">
               <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-                რაოდენობა:
+                Quantity:
               </span>
 
-              {/* რაოდენობის მრიცხველი (- / +) */}
+              {/* Quantity Counter (- / +) */}
               <div className="inline-flex items-center rounded-xl border border-gray-300 bg-white p-1 dark:border-gray-700 dark:bg-gray-800 shadow-xs">
                 <button
                   type="button"
-                  aria-label="რაოდენობის შემცირება"
+                  aria-label="Decrease quantity"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={quantity <= 1 || product.stock <= 0}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 dark:text-gray-200 dark:hover:bg-gray-700 cursor-pointer"
@@ -199,7 +194,7 @@ export function ProductDetailPage() {
 
                 <button
                   type="button"
-                  aria-label="რაოდენობის გაზრდა"
+                  aria-label="Increase quantity"
                   onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
                   disabled={quantity >= product.stock || product.stock <= 0}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 dark:text-gray-200 dark:hover:bg-gray-700 cursor-pointer"
@@ -208,13 +203,13 @@ export function ProductDetailPage() {
                 </button>
               </div>
 
-              {/* ჯამური ფასი არჩეული რაოდენობისთვის */}
+              {/* Line item subtotal */}
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                ჯამი: <strong className="text-gray-900 dark:text-white">${(product.price * quantity).toFixed(2)}</strong>
+                Subtotal: <strong className="text-gray-900 dark:text-white">${(product.price * quantity).toFixed(2)}</strong>
               </span>
             </div>
 
-            {/* კალათაში დამატების ღილაკი */}
+            {/* Add to Cart Button */}
             <button
               type="button"
               onClick={handleAddToCart}
@@ -225,7 +220,7 @@ export function ProductDetailPage() {
                   : 'bg-indigo-600 shadow-indigo-500/25 hover:bg-indigo-700'
               }`}
             >
-              {isAdded ? `✓ დაემატა კალათაში (${quantity} ცალი)` : `🛒 კალათაში დამატება (${quantity})`}
+              {isAdded ? `✓ Added to cart (${quantity})` : `🛒 Add to cart (${quantity})`}
             </button>
           </div>
         </div>

@@ -4,7 +4,7 @@ import type { Product } from '../types/product'
 import { CART_STORAGE_KEY, CartContext } from './cartContext'
 
 /**
- * CartProvider — კალათის გლობალური მდგომარეობის კომპონენტი
+ * CartProvider — Global Cart State Provider with localStorage sync
  */
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -20,7 +20,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart))
     } catch (err) {
-      console.error('კალათის შენახვა localStorage-ში ვერ მოხერხდა', err)
+      console.error('Failed to save cart to localStorage', err)
     }
   }, [cart])
 
@@ -79,4 +79,3 @@ export function CartProvider({ children }: { children: ReactNode }) {
     </CartContext.Provider>
   )
 }
-

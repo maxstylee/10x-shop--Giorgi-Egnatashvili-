@@ -3,7 +3,7 @@ import type { User } from '../types/auth'
 import { AuthContext, USER_STORAGE_KEY } from './authContext'
 
 /**
- * AuthProvider — ავტორიზაციის გლობალური მდგომარეობის კომპონენტი
+ * AuthProvider — Global Authentication State Provider
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(USER_STORAGE_KEY)
       }
     } catch (err) {
-      console.error('მომხმარებლის მონაცემების შენახვა ვერ მოხერხდა', err)
+      console.error('Failed to save user session to localStorage', err)
     }
   }, [user])
 
@@ -48,4 +48,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   )
 }
-

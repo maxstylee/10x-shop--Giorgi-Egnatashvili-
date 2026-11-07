@@ -3,9 +3,8 @@ import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 
 /**
- * MainLayout — Layout მარშრუტი (Header + <Outlet /> + Footer)
- * ყველა გვერდი ზის ამ Layout-ში <Outlet /> კომპონენტის მეშვეობით,
- * რაც გამორიცხავს Header-ისა და Footer-ის ყოველ გვერდზე დუბლირებას.
+ * MainLayout — Shared Layout Route (Header + <Outlet /> + Footer)
+ * Embeds all application routes via <Outlet /> to avoid header/footer duplication.
  */
 export function MainLayout() {
   return (

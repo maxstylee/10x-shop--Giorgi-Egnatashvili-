@@ -19,3 +19,17 @@ body {
   background-color: #0b0f19;
   color: #f1f5f9;
 }
+
+/* 
+ * 🎨 UI/UX Theme Transition Polish:
+ * უზრუნველყოფს ფონების, საზღვრებისა და ტექსტის ფერების ერთდროულ, 
+ * სინქრონულ და რბილ (200ms) გადასვლას Light და Dark რეჟიმებს შორის.
+ * ცალკეული ელემენტები აღარ გადავლენ სხვადასხვა სისწრაფით.
+ */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}

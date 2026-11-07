@@ -5,7 +5,7 @@ import { ProductSkeleton } from '../components/ProductSkeleton'
 import type { Product } from '../types/product'
 
 /**
- * HomePage — მთავარი გვერდი (კატალოგი)
+ * HomePage — Catalog Main Page (/)
  */
 export function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -20,7 +20,7 @@ export function HomePage() {
       const data = await getProductsByCategory(selectedCategory, 12, 0)
       setProducts(data.products)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'უცნობი შეცდომა მონაცემების ჩატვირთვისას')
+      setError(err instanceof Error ? err.message : 'Unknown error while loading products')
     } finally {
       setIsLoading(false)
     }
@@ -39,7 +39,7 @@ export function HomePage() {
         }
       } catch (err) {
         if (isSubscribed) {
-          setError(err instanceof Error ? err.message : 'ტექნიკის ჩატვირთვა ვერ მოხერხდა')
+          setError(err instanceof Error ? err.message : 'Failed to load products')
         }
       } finally {
         if (isSubscribed) {
@@ -63,13 +63,13 @@ export function HomePage() {
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
             <span>⚡</span>
-            <span>ტექნოლოგიები & გაჯეტები</span>
+            <span>Technologies & Gadgets</span>
           </div>
           <h2 id="products-heading" className="mt-1 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl dark:text-white">
-            {currentCategoryObj ? `${currentCategoryObj.icon} ${currentCategoryObj.name}` : 'ტექნიკის კატალოგი'}
+            {currentCategoryObj ? `${currentCategoryObj.icon} ${currentCategoryObj.name}` : 'Tech Catalog'}
           </h2>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            DummyJSON API-დან მიღებული ტექნიკის პროდუქტები
+            Curated tech products loaded from DummyJSON API
           </p>
         </div>
 
@@ -80,12 +80,12 @@ export function HomePage() {
           className="inline-flex cursor-pointer items-center justify-center gap-2 self-start rounded-xl bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-xs ring-1 ring-gray-200 transition hover:bg-gray-50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 md:self-auto dark:bg-gray-900 dark:text-gray-200 dark:ring-gray-800 dark:hover:bg-gray-800"
         >
           <span className={isLoading ? 'animate-spin' : ''}>🔄</span>
-          განახლება
+          Refresh
         </button>
       </div>
 
-      {/* ტექნიკის კატეგორიების ტაბები */}
-      <div className="mt-6 flex flex-wrap gap-2 border-b border-gray-200 pb-4 dark:border-gray-800" role="tablist" aria-label="ტექნიკის კატეგორიები">
+      {/* Tech Category Filter Tabs */}
+      <div className="mt-6 flex flex-wrap gap-2 border-b border-gray-200 pb-4 dark:border-gray-800" role="tablist" aria-label="Tech Categories">
         {TECH_CATEGORIES.map((category) => {
           const isSelected = selectedCategory === category.slug
           return (
@@ -122,7 +122,7 @@ export function HomePage() {
         <div role="alert" className="my-8 rounded-2xl border border-red-200 bg-red-50 p-6 text-center dark:border-red-900/50 dark:bg-red-950/30">
           <span className="text-3xl" aria-hidden="true">⚠️</span>
           <h3 className="mt-2 text-base font-semibold text-red-800 dark:text-red-200">
-            მონაცემების ჩატვირთვა ვერ მოხერხდა
+            Failed to load products
           </h3>
           <p className="mt-1 text-sm text-red-600 dark:text-red-300">{error}</p>
           <button
@@ -130,7 +130,7 @@ export function HomePage() {
             onClick={handleRefresh}
             className="mt-4 cursor-pointer rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
           >
-            ხელახლა ცდა
+            Retry
           </button>
         </div>
       )}
@@ -138,7 +138,7 @@ export function HomePage() {
       {/* 3. Empty State */}
       {!isLoading && !error && products.length === 0 && (
         <div className="my-12 text-center text-gray-500 dark:text-gray-400">
-          <p className="text-lg font-medium">ამ კატეგორიაში პროდუქტები ვერ მოიძებნა</p>
+          <p className="text-lg font-medium">No products found in this category.</p>
         </div>
       )}
 

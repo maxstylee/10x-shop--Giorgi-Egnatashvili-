@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
 /**
- * ScrollToTop — მარშრუტის (URL) ცვლილებისას გვერდის თავში ატანა
- * იყენებს useLocation-ს, useEffect-ს და window.scrollTo-ს.
+ * ScrollToTop — Scrolls window to top on route change
+ * Uses useLocation, useEffect, and window.scrollTo.
  */
 export function ScrollToTop() {
   const { pathname } = useLocation()
@@ -14,4 +14,3 @@ export function ScrollToTop() {
 
   return null
 }
-
