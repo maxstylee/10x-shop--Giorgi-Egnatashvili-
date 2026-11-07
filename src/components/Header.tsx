@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useCart } from '../hooks/useCart'
@@ -5,6 +6,35 @@ import { useCart } from '../hooks/useCart'
 export function Header() {
   const { user, logout } = useAuth()
   const { totalCount } = useCart()
+
+  // 1. Dark / Light თემის State
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+
+  // საწყისი თემის ჩატვირთვა (localStorage ან სისტემური)
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('shop_theme') as 'light' | 'dark' | null
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      document.documentElement.classList.add('dark')
+      setTheme('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      setTheme('light')
+    }
+  }, [])
+
+  // თემის გადართვის ფუნქცია (html ტეგზე 'dark' კლასის დამატება/მოხსნა)
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(nextTheme)
+    if (nextTheme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    localStorage.setItem('shop_theme', nextTheme)
+  }
 
   return (
     <header className="sticky top-0 z-30 border-b border-gray-200 bg-white/80 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/80">
@@ -91,6 +121,17 @@ export function Header() {
               </span>
             )}
           </NavLink>
+
+          {/* Dark / Light თემის გადამრთველი ღილაკი */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'ღია თემაზე გადართვა' : 'მუქ თემაზე გადართვა'}
+            title={theme === 'dark' ? 'ღია თემაზე გადართვა' : 'მუქ თემაზე გადართვა'}
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-sm shadow-xs transition hover:bg-gray-100 active:scale-90 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
         </nav>
       </div>
     </header>
